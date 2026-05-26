@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update Diário — Tecnologia & Negócios</title>
+  <meta name="description" content="As últimas notícias de tecnologia, startups e negócios do Brasil e do mundo." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand:       #E43265;
+      --brand-dark:  #C41E4E;
+      --brand-light: #FDEDF2;
+      --black:       #0A0A0A;
+      --gray-900:    #111111;
+      --gray-700:    #333333;
+      --gray-500:    #666666;
+      --gray-300:    #AAAAAA;
+      --gray-100:    #F2F2F2;
+      --white:       #FFFFFF;
+      --border:      #E5E5E5;
+      --max-w:       1200px;
+      --font-sans:   'Inter', sans-serif;
+      --font-serif:  'Merriweather', Georgia, serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); background: var(--white); color: var(--gray-900); line-height: 1.6; font-size: 16px; }
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: var(--brand); }
+    img { display: block; width: 100%; height: auto; object-fit: cover; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+
+    /* BANNER */
+    .top-banner { background: var(--brand); color: var(--white); padding: 10px 0; position: relative; }
+    .top-banner-inner { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .top-banner-text { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .top-banner-text strong { font-weight: 800; }
+    .top-banner-form { display: flex; gap: 8px; }
+    .top-banner-input { padding: 6px 14px; border-radius: 5px; border: none; background: rgba(255,255,255,.2); color: var(--white); font-size: 13px; font-family: var(--font-sans); outline: none; width: 220px; transition: background .2s; }
+    .top-banner-input::placeholder { color: rgba(255,255,255,.65); }
+    .top-banner-input:focus { background: rgba(255,255,255,.3); }
+    .top-banner-btn { padding: 6px 16px; background: var(--white); color: var(--brand); border: none; border-radius: 5px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+    .top-banner-btn:hover { opacity: .88; }
+    .top-banner-close { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,.7); font-size: 20px; cursor: pointer; line-height: 1; }
+    .top-banner-close:hover { color: var(--white); }
+
+    /* HEADER */
+    .site-header { background: var(--black); border-bottom: 2px solid var(--brand); position: sticky; top: 0; z-index: 100; }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 38px; height: 38px; background: var(--brand); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; }
+    .logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: var(--white); }
+    .logo-text span { color: var(--brand); }
+    .main-nav { display: flex; gap: 0; }
+    .main-nav a { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.75); padding: 8px 14px; border-radius: 6px; transition: background .15s, color .15s; text-transform: uppercase; letter-spacing: .04em; }
+    .main-nav a:hover, .main-nav a.active { background: var(--brand); color: var(--white); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s; border: none; }
+    .btn-primary { background: var(--brand); color: var(--white); }
+    .btn-primary:hover { background: var(--brand-dark); color: var(--white); }
+    .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+    .hamburger span { width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* HERO */
+    .hero { border-bottom: 1px solid var(--border); padding: 40px 0; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 380px; gap: 0 30px; }
+    .hero-main { grid-row: 1 / 3; position: relative; border-radius: 10px; overflow: hidden; background: var(--gray-100); min-height: 460px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .hero-main img { position: absolute; inset: 0; height: 100%; object-fit: cover; }
+    .hero-main-overlay { position: relative; background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.45) 55%, transparent 100%); padding: 28px 30px; color: var(--white); }
+    .hero-main-tag { display: inline-block; background: var(--brand); color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 4px; margin-bottom: 12px; }
+    .hero-main h1 { font-family: var(--font-serif); font-size: 28px; font-weight: 900; line-height: 1.25; margin-bottom: 12px; }
+    .hero-main p { font-size: 14px; opacity: .85; margin-bottom: 14px; }
+    .hero-meta { font-size: 12px; opacity: .7; display: flex; gap: 16px; }
+    .hero-secondary { display: flex; flex-direction: column; gap: 16px; }
+    .hero-card { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .hero-card:last-child { border-bottom: none; padding-bottom: 0; }
+    .hero-card-img { border-radius: 6px; overflow: hidden; height: 78px; background: var(--gray-100); }
+    .hero-card-body { display: flex; flex-direction: column; gap: 4px; }
+    .hero-card-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--brand); }
+    .hero-card h3 { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--black); }
+    .hero-card h3:hover { color: var(--brand); }
+    .hero-card-meta { font-size: 11px; color: var(--gray-300); margin-top: 2px; }
+
+    /* AD */
+    .ad-strip { background: var(--gray-100); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 12px 0; text-align: center; }
+    .ad-label { font-size: 10px; color: var(--gray-300); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+    .ad-placeholder { background: #f8f8f8; border: 1px dashed #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 12px; margin: 0 auto; }
+
+    /* SECTIONS */
+    .section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .section-title { font-size: 18px; font-weight: 900; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 4px; height: 22px; background: var(--brand); border-radius: 2px; display: block; }
+    .section-link { font-size: 13px; font-weight: 600; color: var(--brand); }
+    .section-link:hover { text-decoration: underline; }
+    .news-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .news-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .news-split { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
+
+    .news-card { display: flex; flex-direction: column; gap: 10px; }
+    .news-card-img { border-radius: 8px; overflow: hidden; height: 180px; background: var(--gray-100); flex-shrink: 0; }
+    .news-card-img img { height: 100%; }
+    .news-card-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--brand); }
+    .news-card h3 { font-size: 15px; font-weight: 700; line-height: 1.4; }
+    .news-card h3:hover { color: var(--brand); }
+    .news-card p { font-size: 13px; color: var(--gray-500); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .news-card-meta { font-size: 12px; color: var(--gray-300); display: flex; gap: 12px; }
+
+    .news-list { display: flex; flex-direction: column; gap: 0; }
+    .news-list-item { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .news-list-item:first-child { padding-top: 0; }
+    .news-list-item:last-child { border-bottom: none; }
+    .news-list-img { border-radius: 6px; overflow: hidden; height: 66px; background: var(--gray-100); }
+    .news-list-body { display: flex; flex-direction: column; gap: 4px; }
+    .news-list-tag { font-size: 10px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .05em; }
+    .news-list-body h3 { font-size: 14px; font-weight: 700; line-height: 1.4; }
+    .news-list-body h3:hover { color: var(--brand); }
+    .news-list-meta { font-size: 11px; color: var(--gray-300); }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 28px; }
+    .sidebar-widget { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .sidebar-widget-header { background: var(--black); color: var(--white); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 10px 16px; }
+    .sidebar-widget-body { padding: 16px; }
+    .top-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .top-list li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; }
+    .top-list-num { font-size: 22px; font-weight: 900; color: var(--gray-100); line-height: 1; }
+    .top-list-title { font-size: 13px; font-weight: 600; line-height: 1.4; }
+    .top-list-title:hover { color: var(--brand); }
+    .sidebar-ad { text-align: center; }
+    .sidebar-ad .ad-placeholder { width: 300px; height: 250px; margin: 0 auto; }
+
+    /* NEWSLETTER */
+    .newsletter { background: var(--black); color: var(--white); padding: 56px 0; }
+    .newsletter-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .newsletter-badge { display: inline-block; background: var(--brand); color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 4px 12px; border-radius: 4px; margin-bottom: 16px; }
+    .newsletter h2 { font-family: var(--font-serif); font-size: 34px; font-weight: 900; line-height: 1.2; margin-bottom: 12px; }
+    .newsletter p { font-size: 15px; color: rgba(255,255,255,.7); line-height: 1.6; }
+    .newsletter-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: flex; gap: 10px; }
+    .newsletter-input { flex: 1; padding: 13px 16px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,.2); background: rgba(255,255,255,.07); color: var(--white); font-size: 14px; font-family: var(--font-sans); outline: none; transition: border-color .2s; }
+    .newsletter-input::placeholder { color: rgba(255,255,255,.4); }
+    .newsletter-input:focus { border-color: var(--brand); }
+    .newsletter-submit { padding: 13px 24px; background: var(--brand); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; white-space: nowrap; transition: background .15s; }
+    .newsletter-submit:hover { background: var(--brand-dark); }
+    .newsletter-fine { font-size: 11px; color: rgba(255,255,255,.4); }
+    .newsletter-perks { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .perk { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .perk-icon { width: 32px; height: 32px; background: rgba(255,255,255,.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+    /* OPINION */
+    .opinion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .opinion-card { padding: 24px; border: 1px solid var(--border); border-radius: 10px; display: flex; flex-direction: column; gap: 12px; }
+    .opinion-author { display: flex; align-items: center; gap: 12px; }
+    .opinion-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gray-100); overflow: hidden; flex-shrink: 0; }
+    .opinion-avatar img { height: 100%; }
+    .opinion-author-name { font-size: 14px; font-weight: 700; }
+    .opinion-author-title { font-size: 12px; color: var(--gray-500); }
+    .opinion-card h3 { font-family: var(--font-serif); font-size: 16px; font-weight: 700; line-height: 1.4; }
+    .opinion-card h3:hover { color: var(--brand); }
+    .opinion-card p { font-size: 13px; color: var(--gray-500); line-height: 1.55; }
+
+    /* FOOTER */
+    .site-footer { background: var(--gray-900); color: rgba(255,255,255,.7); padding: 56px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-about .logo-text { color: var(--white); font-size: 22px; }
+    .footer-about p { font-size: 13px; line-height: 1.7; margin-top: 12px; color: rgba(255,255,255,.55); }
+    .footer-social { display: flex; gap: 10px; margin-top: 16px; }
+    .social-btn { width: 36px; height: 36px; background: rgba(255,255,255,.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; transition: background .15s; }
+    .social-btn:hover { background: var(--brand); color: white; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,.55); transition: color .15s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,.35); }
+    .footer-bottom a { color: rgba(255,255,255,.35); }
+    .footer-bottom a:hover { color: rgba(255,255,255,.7); }
+
+    /* ARTICLE PAGE */
+    #article-page { display: none; }
+    .article-hero { background: var(--black); padding: 48px 0 0; }
+    .article-hero-inner { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+    .article-back { display: inline-flex; align-items: center; gap: 6px; color: rgba(255,255,255,.6); font-size: 13px; font-weight: 600; margin-bottom: 20px; cursor: pointer; transition: color .15s; }
+    .article-back:hover { color: var(--white); }
+    .article-cat-tag { display: inline-block; background: var(--brand); color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 4px; margin-bottom: 16px; }
+    .article-title { font-family: var(--font-serif); font-size: 36px; font-weight: 900; line-height: 1.2; color: var(--white); margin-bottom: 16px; }
+    .article-excerpt { font-size: 18px; color: rgba(255,255,255,.7); line-height: 1.6; margin-bottom: 20px; }
+    .article-byline { display: flex; align-items: center; gap: 20px; font-size: 13px; color: rgba(255,255,255,.5); padding-bottom: 32px; }
+    .article-byline strong { color: rgba(255,255,255,.8); font-weight: 600; }
+    .article-cover { width: 100%; max-height: 500px; object-fit: cover; display: block; }
+    .article-body { max-width: 780px; margin: 0 auto; padding: 40px 20px 60px; }
+    .article-body h2 { font-family: var(--font-serif); font-size: 24px; font-weight: 700; margin: 32px 0 14px; }
+    .article-body h3 { font-size: 20px; font-weight: 700; margin: 24px 0 10px; }
+    .article-body p { font-size: 17px; line-height: 1.8; margin-bottom: 20px; color: var(--gray-700); }
+    .article-body ul, .article-body ol { padding-left: 24px; margin-bottom: 20px; }
+    .article-body li { font-size: 17px; line-height: 1.8; margin-bottom: 6px; color: var(--gray-700); }
+    .article-body blockquote { border-left: 4px solid var(--brand); padding: 12px 20px; margin: 24px 0; background: var(--gray-100); border-radius: 0 8px 8px 0; }
+    .article-body blockquote p { font-style: italic; font-size: 18px; color: var(--gray-700); margin: 0; }
+    .article-body img { border-radius: 10px; margin: 24px 0; }
+    .article-body a { color: var(--brand); text-decoration: underline; }
+
+    /* SKELETON */
+    .skel { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skel-img { height: 180px; border-radius: 8px; }
+    .skel-line { height: 14px; margin-bottom: 8px; }
+    .skel-line.short { width: 60%; }
+    .skel-line.med { width: 80%; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--gray-300); }
+    .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+    /* TOAST */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--black); color: white; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; animation: toastIn .25s ease; box-shadow: 0 4px 20px rgba(0,0,0,.25); }
+    .toast.ok  { border-left: 3px solid #4ADE80; }
+    .toast.err { border-left: 3px solid var(--brand); }
+    @keyframes toastIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .news-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-main { min-height: 360px; grid-row: auto; }
+    }
+    @media (max-width: 768px) {
+      .main-nav { display: none; }
+      .hamburger { display: flex; }
+      .hero-grid, .news-grid, .news-grid-3, .news-split,
+      .newsletter-inner, .opinion-grid, .footer-grid { grid-template-columns: 1fr; }
+      .hero-main h1, .article-title { font-size: 22px; }
+      .form-row { flex-direction: column; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .news-grid { grid-template-columns: 1fr; }
+      .newsletter h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BANNER NEWSLETTER -->
+<div class="top-banner" id="top-banner">
+  <div class="container top-banner-inner">
+    <span class="top-banner-text">📧 <strong>Receba o melhor de tech & negócios</strong> todo dia útil no seu email:</span>
+    <form class="top-banner-form" id="banner-form">
+      <input type="email" class="top-banner-input" placeholder="seu@email.com" required />
+      <button type="submit" class="top-banner-btn">Assinar grátis</button>
+    </form>
+  </div>
+  <button class="top-banner-close" onclick="document.getElementById('top-banner').style.display='none'">×</button>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark">U</div>
+      <span class="logo-text">Update<span>Diário</span></span>
+    </a>
+    <nav class="main-nav" id="main-nav">
+      <a href="/" class="active">Home</a>
+    </nav>
+    <div class="header-actions">
+      <a href="#newsletter" class="btn btn-primary">Newsletter</a>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ HOMEPAGE ══════════ -->
+<div id="homepage">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div id="hero-main"></div>
+        <div class="hero-secondary" id="hero-secondary"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADSENSE 1 -->
+  <div class="ad-strip">
+    <div class="container">
+      <div class="ad-label">Publicidade</div>
+      <ins class="adsbygoogle ad-placeholder" style="display:block;width:728px;height:90px;"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
+  <!-- ÚLTIMAS + SIDEBAR -->
+  <section class="section">
+    <div class="container">
+      <div class="news-split">
+        <div>
+          <div class="section-header">
+            <h2 class="section-title">Últimas Notícias</h2>
+            <a href="#" class="section-link">Ver todas →</a>
+          </div>
+          <div class="news-list" id="latest-list"></div>
+        </div>
+        <aside class="sidebar">
+          <div class="sidebar-widget">
+            <div class="sidebar-widget-header">🔥 Mais Recentes</div>
+            <div class="sidebar-widget-body">
+              <ul class="top-list" id="top-list"></ul>
+            </div>
+          </div>
+          <div class="sidebar-ad">
+            <div class="ad-label">Publicidade</div>
+            <ins class="adsbygoogle ad-placeholder" style="display:block;width:300px;height:250px;"
+              data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+          </div>
+          <div class="sidebar-widget">
+            <div class="sidebar-widget-header">📌 Categorias</div>
+            <div class="sidebar-widget-body">
+              <div id="sidebar-cats" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECNOLOGIA -->
+  <section class="section" style="background:var(--gray-100);" id="section-tecnologia">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Tecnologia</h2>
+        <a href="#" class="section-link">Ver tudo →</a>
+      </div>
+      <div class="news-grid" id="grid-tecnologia"></div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter" id="newsletter">
+    <div class="container">
+      <div class="newsletter-inner">
+        <div>
+          <span class="newsletter-badge">📧 Newsletter</span>
+          <h2>O melhor de tech & negócios direto no seu email</h2>
+          <p>Receba todo dia útil um resumo das notícias que realmente importam para quem trabalha com tecnologia e negócios no Brasil.</p>
+          <div class="newsletter-perks">
+            <div class="perk"><div class="perk-icon">⚡</div><span>Resumo matinal antes do mercado abrir</span></div>
+            <div class="perk"><div class="perk-icon">🎯</div><span>Análises exclusivas sem paywall</span></div>
+            <div class="perk"><div class="perk-icon">🔕</div><span>Sem spam. Cancele quando quiser.</span></div>
+          </div>
+        </div>
+        <div class="newsletter-form">
+          <form id="newsletter-form">
+            <div class="form-row"><input type="text" name="name" class="newsletter-input" placeholder="Seu nome" /></div>
+            <div class="form-row">
+              <input type="email" name="email" class="newsletter-input" placeholder="seu@email.com" required />
+              <button type="submit" class="newsletter-submit">Quero receber</button>
+            </div>
+            <p class="newsletter-fine">Ao assinar você concorda com nossa <a href="#" style="color:rgba(255,255,255,.5);">Política de Privacidade</a>.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEGÓCIOS -->
+  <section class="section" id="section-negocios">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Negócios</h2>
+        <a href="#" class="section-link">Ver tudo →</a>
+      </div>
+      <div class="news-grid-3" id="grid-negocios"></div>
+    </div>
+  </section>
+
+  <!-- ADSENSE 2 -->
+  <div class="ad-strip">
+    <div class="container">
+      <div class="ad-label">Publicidade</div>
+      <ins class="adsbygoogle ad-placeholder" style="display:block;width:970px;height:90px;max-width:100%;"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+
+  <!-- OPINIÃO — editorial, estático -->
+  <section class="section" style="background:var(--gray-100);">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Opinião</h2>
+        <a href="#" class="section-link">Ver todas as colunas →</a>
+      </div>
+      <div class="opinion-grid">
+        <div class="opinion-card">
+          <div class="opinion-author">
+            <div class="opinion-avatar"><img src="https://i.pravatar.cc/100?img=11" alt="Ana Lima" /></div>
+            <div><div class="opinion-author-name">Ana Lima</div><div class="opinion-author-title">Ex-CTO do Itaú Digital</div></div>
+          </div>
+          <a href="#"><h3>A IA não vai tirar empregos de TI — vai criar profissões que nem sabemos nomear ainda</h3></a>
+          <p>O pânico coletivo em torno da automação ignora a história. Sempre que uma tecnologia destrói categorias, ela cria outras mais complexas.</p>
+        </div>
+        <div class="opinion-card">
+          <div class="opinion-author">
+            <div class="opinion-avatar"><img src="https://i.pravatar.cc/100?img=33" alt="Carlos Menezes" /></div>
+            <div><div class="opinion-author-name">Carlos Menezes</div><div class="opinion-author-title">Sócio da Astella Investimentos</div></div>
+          </div>
+          <a href="#"><h3>Por que o Brasil está mal posicionado na corrida global por soberania de dados</h3></a>
+          <p>Dependência de infraestrutura estrangeira e ausência de política industrial coerente nos deixam vulneráveis a choques regulatórios.</p>
+        </div>
+        <div class="opinion-card">
+          <div class="opinion-author">
+            <div class="opinion-avatar"><img src="https://i.pravatar.cc/100?img=47" alt="Fernanda Rocha" /></div>
+            <div><div class="opinion-author-name">Fernanda Rocha</div><div class="opinion-author-title">CEO da Distrito</div></div>
+          </div>
+          <a href="#"><h3>O ecossistema de startups precisa de mais exits — não de mais unicórnios no papel</h3></a>
+          <p>Métricas de valuation inflado escondem a fragilidade real do mercado de venture capital no Brasil.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /homepage -->
+
+<!-- ══════════ ARTICLE PAGE ══════════ -->
+<div id="article-page">
+  <div class="article-hero">
+    <div class="article-hero-inner">
+      <div class="article-back" onclick="goHome()">← Voltar</div>
+      <div id="art-tag" class="article-cat-tag"></div>
+      <h1 id="art-title" class="article-title"></h1>
+      <p id="art-excerpt" class="article-excerpt"></p>
+      <div class="article-byline">
+        <span>Por <strong id="art-author"></strong></span>
+        <span id="art-date"></span>
+        <span id="art-readtime"></span>
+      </div>
+    </div>
+  </div>
+  <img id="art-cover" class="article-cover" src="" alt="" style="display:none" />
+  <div id="art-body" class="article-body"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="logo">
+          <div class="logo-mark">U</div>
+          <span class="logo-text">Update<span>Diário</span></span>
+        </div>
+        <p>Referência em jornalismo de tecnologia e negócios no Brasil. Cobertura diária de startups, mercado financeiro, inovação e muito mais.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" title="Twitter/X">𝕏</a>
+          <a href="#" class="social-btn" title="LinkedIn">in</a>
+          <a href="#" class="social-btn" title="Instagram">▶</a>
+          <a href="#" class="social-btn" title="WhatsApp">W</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Editorias</h4>
+        <ul class="footer-links" id="footer-cats">
+          <li><a href="#">Tecnologia</a></li>
+          <li><a href="#">Negócios</a></li>
+          <li><a href="#">Startups</a></li>
+          <li><a href="#">Mercados</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="#">Sobre nós</a></li>
+          <li><a href="#">Anuncie conosco</a></li>
+          <li><a href="#">Trabalhe aqui</a></li>
+          <li><a href="#">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#">Política de Privacidade</a></li>
+          <li><a href="#">Termos de Uso</a></li>
+          <li><a href="#">Política de Cookies</a></li>
+          <li><a href="#">Código de Ética</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Update Diário. Todos os direitos reservados.</span>
+      <span>Feito com ☕ no Brasil · <a href="#">Privacidade</a> · <a href="#">Termos</a></span>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-container"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function timeAgo(d) {
+  if (!d) return '';
+  const diff = (Date.now() - new Date(d)) / 1000;
+  if (diff < 3600)  return `Há ${Math.floor(diff/60)} min`;
+  if (diff < 86400) return `Há ${Math.floor(diff/3600)}h`;
+  return fmtDate(d);
+}
+
+function coverImg(url, title = '') {
+  if (url) return `<img src="${esc(url)}" alt="${esc(title)}" loading="lazy" />`;
+  return `<div style="width:100%;height:100%;background:linear-gradient(135deg,#E43265 0%,#0A0A0A 100%);display:flex;align-items:center;justify-content:center;"><span style="color:rgba(255,255,255,.3);font-size:28px">📰</span></div>`;
+}
+
+function articleUrl(slug) {
+  return `?artigo=${encodeURIComponent(slug)}`;
+}
+
+function toast(msg, type = 'ok') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = (type === 'ok' ? '✅ ' : '❌ ') + msg;
+  $('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+function skeletonCards(n, cls = 'news-grid') {
+  return Array.from({length: n}, () => `
+    <div class="news-card">
+      <div class="skel skel-img"></div>
+      <div class="skel skel-line short"></div>
+      <div class="skel skel-line med"></div>
+      <div class="skel skel-line"></div>
+      <div class="skel skel-line short"></div>
+    </div>`).join('');
+}
+
+async function apiFetch(url) {
+  try {
+    const r = await fetch(url);
+    return r.json();
+  } catch { return null; }
+}
+
+// ─────────────────────────────────────────────
+//  ROUTING
+// ─────────────────────────────────────────────
+async function init() {
+  await loadNav();
+  const slug = new URLSearchParams(window.location.search).get('artigo');
+  if (slug) {
+    showArticle(slug);
+  } else {
+    showHome();
+  }
+}
+
+function showHome() {
+  $('homepage').style.display = 'block';
+  $('article-page').style.display = 'none';
+  document.title = 'Update Diário — Tecnologia & Negócios';
+  loadHero();
+  loadLatest();
+  loadTopList();
+  loadSidebarCats();
+  loadSection('tecnologia', 'grid-tecnologia', 4);
+  loadSection('negocios',   'grid-negocios',   3);
+}
+
+function goHome() {
+  window.history.pushState({}, '', '/');
+  $('homepage').style.display = 'block';
+  $('article-page').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+window.addEventListener('popstate', () => {
+  const slug = new URLSearchParams(window.location.search).get('artigo');
+  if (slug) showArticle(slug);
+  else { $('homepage').style.display = 'block'; $('article-page').style.display = 'none'; }
+});
+
+// ─────────────────────────────────────────────
+//  NAV
+// ─────────────────────────────────────────────
+async function loadNav() {
+  const cats = await apiFetch('/api/public/categories');
+  if (!cats?.length) return;
+
+  const nav = $('main-nav');
+  nav.innerHTML = `<a href="/" class="active">Home</a>` +
+    cats.slice(0, 6).map(c =>
+      `<a href="/?categoria=${c.slug}" onclick="filterCat(event,'${c.slug}')">${esc(c.name)}</a>`
+    ).join('');
+
+  $('footer-cats').innerHTML = cats.map(c =>
+    `<li><a href="/?categoria=${c.slug}" onclick="filterCat(event,'${c.slug}')">${esc(c.name)}</a></li>`
+  ).join('');
+}
+
+async function filterCat(e, slug) {
+  e.preventDefault();
+  document.querySelectorAll('.main-nav a').forEach(a => a.classList.remove('active'));
+  e.target.classList.add('active');
+  // Scroll para a seção correspondente se existir, ou mostra todas
+  const section = $(`section-${slug}`);
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+//  HERO
+// ─────────────────────────────────────────────
+async function loadHero() {
+  $('hero-main').innerHTML = `<div class="skel" style="min-height:460px;border-radius:10px;"></div>`;
+  $('hero-secondary').innerHTML = skeletonCards(3);
+
+  const [featuredRes, recentRes] = await Promise.all([
+    apiFetch('/api/public/articles?featured=1&limit=1'),
+    apiFetch('/api/public/articles?limit=5'),
+  ]);
+
+  const featured = featuredRes?.articles?.[0];
+  const recent   = recentRes?.articles || [];
+
+  // Hero principal
+  if (featured) {
+    $('hero-main').innerHTML = `
+      <a href="${articleUrl(featured.slug)}" onclick="openArticle(event,'${esc(featured.slug)}')">
+        ${featured.cover_image
+          ? `<img src="${esc(featured.cover_image)}" alt="${esc(featured.title)}" />`
+          : `<div style="position:absolute;inset:0;background:linear-gradient(135deg,#E43265,#0A0A0A)"></div>`}
+        <div class="hero-main-overlay">
+          <span class="hero-main-tag">${esc(featured.category_name || 'Destaque')}</span>
+          <h1>${esc(featured.title)}</h1>
+          ${featured.excerpt ? `<p>${esc(featured.excerpt)}</p>` : ''}
+          <div class="hero-meta">
+            <span>Por ${esc(featured.author)}</span>
+            <span>${fmtDate(featured.published_at)} · ${featured.read_time} min</span>
+          </div>
+        </div>
+      </a>`;
+  } else {
+    $('hero-main').innerHTML = `<div style="min-height:460px;background:var(--gray-100);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gray-300);font-size:14px;">Nenhum destaque publicado ainda</div>`;
+  }
+
+  // Cards secundários (excluindo o hero principal)
+  const secondary = recent.filter(a => a.id !== featured?.id).slice(0, 3);
+  if (!secondary.length) {
+    $('hero-secondary').innerHTML = '';
+    return;
+  }
+  $('hero-secondary').innerHTML = secondary.map(a => `
+    <div class="hero-card">
+      <a href="${articleUrl(a.slug)}" class="hero-card-img" onclick="openArticle(event,'${esc(a.slug)}')">
+        ${coverImg(a.cover_image, a.title)}
+      </a>
+      <div class="hero-card-body">
+        <span class="hero-card-tag">${esc(a.category_name || '')}</span>
+        <a href="${articleUrl(a.slug)}" onclick="openArticle(event,'${esc(a.slug)}')"><h3>${esc(a.title)}</h3></a>
+        <span class="hero-card-meta">${timeAgo(a.published_at)} · ${a.read_time} min</span>
+      </div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+//  ÚLTIMAS
+// ─────────────────────────────────────────────
+async function loadLatest() {
+  $('latest-list').innerHTML = Array.from({length:6}, () => `
+    <div class="news-list-item">
+      <div class="skel" style="height:66px;border-radius:6px;"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:4px 0">
+        <div class="skel skel-line short"></div>
+        <div class="skel skel-line med"></div>
+        <div class="skel skel-line short"></div>
+      </div>
+    </div>`).join('');
+
+  const data = await apiFetch('/api/public/articles?limit=6');
+  const articles = data?.articles || [];
+
+  if (!articles.length) {
+    $('latest-list').innerHTML = `<div class="empty-state"><div class="icon">📰</div><p>Nenhuma notícia publicada ainda.</p></div>`;
+    return;
+  }
+
+  $('latest-list').innerHTML = articles.map(a => `
+    <div class="news-list-item">
+      <a href="${articleUrl(a.slug)}" class="news-list-img" onclick="openArticle(event,'${esc(a.slug)}')">
+        ${coverImg(a.cover_image, a.title)}
+      </a>
+      <div class="news-list-body">
+        <span class="news-list-tag">${esc(a.category_name || '')}</span>
+        <a href="${articleUrl(a.slug)}" onclick="openArticle(event,'${esc(a.slug)}')"><h3>${esc(a.title)}</h3></a>
+        <span class="news-list-meta">${timeAgo(a.published_at)} · ${a.read_time} min</span>
+      </div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+//  TOP LIST SIDEBAR
+// ─────────────────────────────────────────────
+async function loadTopList() {
+  const data = await apiFetch('/api/public/articles?limit=5');
+  const articles = data?.articles || [];
+  $('top-list').innerHTML = articles.map((a, i) => `
+    <li>
+      <span class="top-list-num">${i + 1}</span>
+      <a href="${articleUrl(a.slug)}" class="top-list-title" onclick="openArticle(event,'${esc(a.slug)}')">${esc(a.title)}</a>
+    </li>`).join('');
+}
+
+// ─────────────────────────────────────────────
+//  SIDEBAR CATEGORIES
+// ─────────────────────────────────────────────
+async function loadSidebarCats() {
+  const cats = await apiFetch('/api/public/categories');
+  if (!cats?.length) return;
+  $('sidebar-cats').innerHTML = cats.map(c =>
+    `<a href="/?categoria=${c.slug}" onclick="filterCat(event,'${c.slug}')"
+      style="background:var(--brand-light);color:var(--brand);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;">
+      #${esc(c.name)}
+    </a>`).join('');
+}
+
+// ─────────────────────────────────────────────
+//  SEÇÕES POR CATEGORIA
+// ─────────────────────────────────────────────
+async function loadSection(categorySlug, gridId, limit) {
+  const el = $(gridId);
+  if (!el) return;
+  el.innerHTML = skeletonCards(limit);
+
+  const data = await apiFetch(`/api/public/articles?category=${categorySlug}&limit=${limit}`);
+  const articles = data?.articles || [];
+
+  if (!articles.length) {
+    el.closest('section').style.display = 'none';
+    return;
+  }
+
+  el.innerHTML = articles.map(a => `
+    <div class="news-card">
+      <a href="${articleUrl(a.slug)}" class="news-card-img" onclick="openArticle(event,'${esc(a.slug)}')">
+        ${coverImg(a.cover_image, a.title)}
+      </a>
+      <span class="news-card-tag">${esc(a.category_name || categorySlug)}</span>
+      <a href="${articleUrl(a.slug)}" onclick="openArticle(event,'${esc(a.slug)}')"><h3>${esc(a.title)}</h3></a>
+      ${a.excerpt ? `<p>${esc(a.excerpt)}</p>` : ''}
+      <div class="news-card-meta"><span>${fmtDate(a.published_at)}</span><span>${a.read_time} min</span></div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+//  ARTICLE PAGE
+// ─────────────────────────────────────────────
+function openArticle(e, slug) {
+  e.preventDefault();
+  window.history.pushState({}, '', `?artigo=${encodeURIComponent(slug)}`);
+  showArticle(slug);
+}
+
+async function showArticle(slug) {
+  $('homepage').style.display = 'none';
+  $('article-page').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  // Loading state
+  $('art-title').textContent   = 'Carregando…';
+  $('art-excerpt').textContent = '';
+  $('art-body').innerHTML      = `<div class="skel skel-line" style="margin-bottom:16px"></div>`.repeat(8);
+
+  const article = await apiFetch(`/api/public/articles/${slug}`);
+  if (!article || article.error) {
+    $('art-title').textContent = 'Artigo não encontrado';
+    $('art-body').innerHTML    = '<p>Este artigo não existe ou foi removido.</p>';
+    return;
+  }
+
+  document.title = `${article.title} — Update Diário`;
+  $('art-tag').textContent     = article.category_name || 'Geral';
+  $('art-title').textContent   = article.title;
+  $('art-excerpt').textContent = article.excerpt || '';
+  $('art-author').textContent  = article.author || 'Redação';
+  $('art-date').textContent    = fmtDate(article.published_at);
+  $('art-readtime').textContent = `${article.read_time} min de leitura`;
+  $('art-body').innerHTML      = article.content || '<p>Conteúdo em breve.</p>';
+
+  const cover = $('art-cover');
+  if (article.cover_image) {
+    cover.src = article.cover_image;
+    cover.alt = article.title;
+    cover.style.display = 'block';
+  } else {
+    cover.style.display = 'none';
+  }
+}
+
+// ─────────────────────────────────────────────
+//  NEWSLETTER FORMS
+// ─────────────────────────────────────────────
+async function subscribeNewsletter(email, name) {
+  const r = await fetch('/api/public/newsletter', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, name }),
+  }).then(r => r.json());
+  return r;
+}
+
+$('banner-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = e.target.querySelector('input[type="email"]').value;
+  const r = await subscribeNewsletter(email, '');
+  if (r.ok) {
+    e.target.innerHTML = '<span style="font-weight:700;color:white;">✓ Obrigado! Confirme seu email.</span>';
+    setTimeout(() => $('top-banner').style.display = 'none', 3000);
+  } else {
+    toast(r.error || 'Erro ao assinar', 'err');
+  }
+});
+
+$('newsletter-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name  = e.target.querySelector('[name="name"]').value;
+  const email = e.target.querySelector('[name="email"]').value;
+  const btn   = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  const r = await subscribeNewsletter(email, name);
+  if (r.ok) {
+    e.target.innerHTML = '<p style="color:white;font-size:16px;font-weight:600;text-align:center;padding:20px 0;">✅ Inscrição confirmada! Bem-vindo(a) ao Update Diário.</p>';
+  } else {
+    toast(r.error || 'Erro ao assinar', 'err');
+    btn.disabled = false; btn.textContent = 'Quero receber';
+  }
+});
+
+// ─────────────────────────────────────────────
+//  HAMBURGER MENU
+// ─────────────────────────────────────────────
+$('hamburger').addEventListener('click', () => {
+  const nav = $('main-nav');
+  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+  nav.style.flexDirection = 'column';
+  nav.style.position = 'absolute';
+  nav.style.top = '64px';
+  nav.style.left = '0';
+  nav.style.right = '0';
+  nav.style.background = 'var(--black)';
+  nav.style.padding = '12px';
+  nav.style.zIndex = '99';
+});
+
+// ─────────────────────────────────────────────
+//  START
+// ─────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update Diário — CMS Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand:      #E43265;
+      --brand-d:    #C41E4E;
+      --brand-l:    #FDEDF2;
+      --black:      #0A0A0A;
+      --gray-900:   #111;
+      --gray-700:   #333;
+      --gray-500:   #666;
+      --gray-300:   #AAA;
+      --gray-100:   #F4F4F5;
+      --white:      #FFF;
+      --border:     #E4E4E7;
+      --sidebar-w:  230px;
+      --header-h:   56px;
+      --success:    #16A34A;
+      --warning:    #D97706;
+      --danger:     #DC2626;
+    }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; font-size: 14px; background: var(--gray-100); color: var(--gray-900); }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font-family: inherit; font-size: 14px; }
+
+    /* ─── LOGIN ─────────────────────────── */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: var(--black);
+    }
+    .login-box {
+      background: var(--white); border-radius: 14px;
+      padding: 40px 36px; width: 360px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    }
+    .login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+    .login-logo-mark {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--brand); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 18px;
+    }
+    .login-logo-text { font-size: 18px; font-weight: 800; }
+    .login-logo-text span { color: var(--brand); }
+    .login-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .login-sub   { font-size: 13px; color: var(--gray-500); margin-bottom: 24px; }
+    .login-error { background: #FEE2E2; color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .login-error.show { display: block; }
+
+    /* ─── LAYOUT ─────────────────────────── */
+    #app { display: none; height: 100vh; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w); background: var(--black);
+      display: flex; flex-direction: column; z-index: 50;
+    }
+    .sidebar-brand {
+      height: var(--header-h); display: flex; align-items: center;
+      gap: 10px; padding: 0 18px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .sidebar-brand-mark {
+      width: 30px; height: 30px; border-radius: 6px;
+      background: var(--brand); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 15px; flex-shrink: 0;
+    }
+    .sidebar-brand-name { font-size: 15px; font-weight: 800; color: var(--white); }
+    .sidebar-brand-name span { color: var(--brand); }
+    .sidebar-brand-badge {
+      margin-left: auto; font-size: 9px; font-weight: 700;
+      background: var(--brand); color: white;
+      padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: .05em;
+    }
+    .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+    .nav-section { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3);
+      text-transform: uppercase; letter-spacing: .1em; padding: 14px 8px 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: 8px; cursor: pointer;
+      color: rgba(255,255,255,.6); font-weight: 500;
+      transition: background .15s, color .15s;
+      user-select: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.07); color: var(--white); }
+    .nav-item.active { background: var(--brand); color: var(--white); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+    .nav-item .badge {
+      margin-left: auto; background: var(--brand); color: white;
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+    }
+    .nav-item.active .badge { background: rgba(255,255,255,.3); }
+    .sidebar-footer {
+      padding: 12px 10px; border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Main area */
+    .main { margin-left: var(--sidebar-w); height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      height: var(--header-h); background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 24px; flex-shrink: 0;
+    }
+    .topbar-title { font-size: 16px; font-weight: 700; flex: 1; }
+    .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* ─── CARDS / WIDGETS ─────────────────── */
+    .stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--white); border-radius: 12px;
+      padding: 18px 20px; border: 1px solid var(--border);
+    }
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    .stat-value { font-size: 32px; font-weight: 800; line-height: 1; }
+    .stat-value.brand { color: var(--brand); }
+    .stat-sub { font-size: 11px; color: var(--gray-300); margin-top: 4px; }
+
+    .card {
+      background: var(--white); border-radius: 12px;
+      border: 1px solid var(--border); overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      font-weight: 700; font-size: 14px;
+    }
+
+    /* ─── TABLE ─────────────────────────── */
+    .tbl { width: 100%; border-collapse: collapse; }
+    .tbl th {
+      text-align: left; font-size: 11px; font-weight: 700;
+      color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em;
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+      background: var(--gray-100);
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:hover td { background: #FAFAFA; }
+    .tbl-title { font-weight: 600; font-size: 13px; max-width: 340px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ─── BADGES ─────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .badge-published { background: #DCFCE7; color: var(--success); }
+    .badge-draft     { background: #FEF9C3; color: var(--warning); }
+    .badge-featured  { background: var(--brand-l); color: var(--brand); }
+
+    /* ─── BUTTONS ─────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 8px; font-weight: 600;
+      cursor: pointer; border: none; transition: all .15s; white-space: nowrap;
+    }
+    .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 6px; }
+    .btn-primary  { background: var(--brand); color: var(--white); }
+    .btn-primary:hover  { background: var(--brand-d); }
+    .btn-black   { background: var(--black); color: var(--white); }
+    .btn-black:hover   { background: var(--gray-700); }
+    .btn-ghost   { background: transparent; color: var(--gray-700); border: 1px solid var(--border); }
+    .btn-ghost:hover   { border-color: var(--gray-300); background: var(--gray-100); }
+    .btn-danger  { background: #FEE2E2; color: var(--danger); }
+    .btn-danger:hover  { background: #FCA5A5; }
+    .btn-success { background: #DCFCE7; color: var(--success); }
+    .btn-success:hover { background: #BBF7D0; }
+
+    .btn-group { display: flex; gap: 6px; }
+
+    /* ─── FORMS ─────────────────────────── */
+    .form-row   { display: grid; gap: 16px; margin-bottom: 16px; }
+    .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+    .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 12px; font-weight: 600; color: var(--gray-700); }
+    .form-input, .form-select, .form-textarea {
+      padding: 9px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 13px; outline: none;
+      transition: border-color .15s; background: var(--white);
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--brand); }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .form-hint { font-size: 11px; color: var(--gray-300); }
+
+    /* Toggle */
+    .toggle-row { display: flex; align-items: center; gap: 10px; }
+    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; border-radius: 22px;
+      background: var(--gray-300); cursor: pointer; transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; width: 16px; height: 16px;
+      border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform .2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--brand); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ─── EDITOR ─────────────────────────── */
+    #page-editor { display: none; }
+    .editor-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+    .editor-main { display: flex; flex-direction: column; gap: 16px; }
+    .editor-side { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 0; }
+    .quill-wrap .ql-container { min-height: 320px; font-size: 15px; }
+    .quill-wrap .ql-toolbar { border-radius: 8px 8px 0 0; border-color: var(--border); }
+    .quill-wrap .ql-container { border-radius: 0 0 8px 8px; border-color: var(--border); }
+
+    /* Cover image */
+    .cover-drop {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 20px; text-align: center; cursor: pointer;
+      transition: border-color .2s; background: var(--gray-100);
+    }
+    .cover-drop:hover { border-color: var(--brand); }
+    .cover-drop.has-image { border-style: solid; padding: 0; overflow: hidden; height: 180px; }
+    .cover-drop img { width: 100%; height: 100%; object-fit: cover; }
+    .cover-drop-label { font-size: 13px; color: var(--gray-500); margin-top: 8px; }
+
+    /* ─── MEDIA LIBRARY ─────────────────── */
+    .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+    .media-item {
+      border-radius: 8px; overflow: hidden; border: 2px solid transparent;
+      cursor: pointer; position: relative; aspect-ratio: 1;
+      background: var(--gray-100);
+    }
+    .media-item img { width: 100%; height: 100%; object-fit: cover; }
+    .media-item:hover { border-color: var(--brand); }
+    .media-item.selected { border-color: var(--brand); }
+    .media-item-del {
+      position: absolute; top: 4px; right: 4px;
+      background: rgba(0,0,0,.6); color: white; border: none; border-radius: 4px;
+      width: 22px; height: 22px; font-size: 12px; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+    }
+    .media-item:hover .media-item-del { display: flex; }
+
+    /* ─── TOAST ─────────────────────────── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast-msg {
+      background: var(--black); color: white;
+      padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      animation: slideIn .25s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    }
+    .toast-msg.success { border-left: 3px solid #4ADE80; }
+    .toast-msg.error   { border-left: 3px solid var(--brand); }
+    @keyframes slideIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+
+    /* ─── MODAL ─────────────────────────── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center; z-index: 200;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 14px;
+      padding: 28px; width: 440px; max-width: 95vw;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 18px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    /* ─── FILTERS ─────────────────────────── */
+    .filters { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filters .form-input { width: 220px; }
+    .filter-tab {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid var(--border); background: var(--white);
+      transition: all .15s;
+    }
+    .filter-tab.active { background: var(--brand); color: white; border-color: var(--brand); }
+
+    /* ─── PAGINATION ─────────────────────── */
+    .pagination { display: flex; align-items: center; gap: 6px; margin-top: 16px; justify-content: center; }
+    .page-btn {
+      width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+      background: white; cursor: pointer; font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .page-btn.active { background: var(--brand); color: white; border-color: var(--brand); }
+    .page-btn:hover:not(.active) { border-color: var(--brand); color: var(--brand); }
+
+    /* ─── MISC ─────────────────────────── */
+    .empty { text-align: center; padding: 48px 20px; color: var(--gray-300); }
+    .empty .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty p { font-size: 14px; }
+    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-300); }
+    .color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; background: var(--brand-l); color: var(--brand); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-mark">U</div>
+      <div class="login-logo-text">Update<span>Diário</span></div>
+    </div>
+    <div class="login-title">Painel de Gestão</div>
+    <div class="login-sub">Entre com suas credenciais de admin</div>
+    <div class="login-error" id="login-error"></div>
+    <form id="login-form">
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Usuário</label>
+        <input class="form-input" id="login-user" type="text" placeholder="admin" autocomplete="username" required />
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">Senha</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-mark">U</div>
+      <div class="sidebar-brand-name">Update<span>Diário</span></div>
+      <span class="sidebar-brand-badge">CMS</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" data-page="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" data-page="articles">
+        <span class="icon">📰</span> Artigos
+        <span class="badge" id="nav-badge-articles">0</span>
+      </div>
+      <div class="nav-item" data-page="editor">
+        <span class="icon">✏️</span> Novo Artigo
+      </div>
+      <div class="nav-section">Configurações</div>
+      <div class="nav-item" data-page="categories">
+        <span class="icon">🏷️</span> Categorias
+      </div>
+      <div class="nav-item" data-page="media">
+        <span class="icon">🖼️</span> Mídia
+      </div>
+      <div class="nav-item" data-page="newsletter">
+        <span class="icon">📧</span> Newsletter
+        <span class="badge" id="nav-badge-newsletter">0</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="nav-item" id="btn-logout">
+        <span class="icon">🚪</span> Sair
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div id="topbar-actions"></div>
+    </div>
+    <div class="content" id="content">
+
+      <!-- ── DASHBOARD ─────────────────────── -->
+      <section id="page-dashboard">
+        <div class="stat-grid" id="stat-grid">
+          <div class="stat-card"><div class="stat-label">Total de Artigos</div><div class="stat-value brand" id="s-total">–</div></div>
+          <div class="stat-card"><div class="stat-label">Publicados</div><div class="stat-value" id="s-pub">–</div></div>
+          <div class="stat-card"><div class="stat-label">Rascunhos</div><div class="stat-value" id="s-draft">–</div></div>
+          <div class="stat-card"><div class="stat-label">Categorias</div><div class="stat-value" id="s-cats">–</div></div>
+          <div class="stat-card"><div class="stat-label">Assinantes</div><div class="stat-value brand" id="s-news">–</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            Artigos Recentes
+            <button class="btn btn-primary btn-sm" onclick="showPage('editor'); newArticle()">+ Novo Artigo</button>
+          </div>
+          <table class="tbl">
+            <thead><tr>
+              <th>Título</th><th>Categoria</th><th>Status</th><th>Data</th><th></th>
+            </tr></thead>
+            <tbody id="recent-tbody"><tr><td colspan="5" class="loading">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── ARTICLES ─────────────────────── -->
+      <section id="page-articles" style="display:none">
+        <div class="filters">
+          <input class="form-input" id="search-input" placeholder="🔍  Buscar artigos…" oninput="debounceSearch()" />
+          <span class="filter-tab active" data-status="" onclick="setStatusFilter(this,'')">Todos</span>
+          <span class="filter-tab" data-status="published" onclick="setStatusFilter(this,'published')">Publicados</span>
+          <span class="filter-tab" data-status="draft" onclick="setStatusFilter(this,'draft')">Rascunhos</span>
+          <select class="form-select" id="cat-filter" style="width:160px" onchange="loadArticles()">
+            <option value="">Todas categorias</option>
+          </select>
+          <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="showPage('editor'); newArticle()">+ Novo Artigo</button>
+        </div>
+        <div class="card">
+          <table class="tbl">
+            <thead><tr>
+              <th style="width:40px"></th>
+              <th>Título</th><th>Categoria</th><th>Autor</th>
+              <th>Status</th><th>Data</th><th style="width:160px">Ações</th>
+            </tr></thead>
+            <tbody id="articles-tbody"><tr><td colspan="7" class="loading">Carregando…</td></tr></tbody>
+          </table>
+          <div id="articles-pagination" style="padding:14px 16px"></div>
+        </div>
+      </section>
+
+      <!-- ── EDITOR ─────────────────────────── -->
+      <section id="page-editor" style="display:none">
+        <div class="editor-layout">
+          <div class="editor-main">
+            <div class="card" style="padding:20px">
+              <div class="form-group" style="margin-bottom:16px">
+                <label class="form-label">Título *</label>
+                <input class="form-input" id="ed-title" placeholder="Digite o título do artigo…" style="font-size:17px;font-weight:700" />
+              </div>
+              <div class="form-group" style="margin-bottom:16px">
+                <label class="form-label">Resumo (excerpt)</label>
+                <textarea class="form-textarea" id="ed-excerpt" placeholder="Breve descrição que aparece na listagem (160–200 caracteres)"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Conteúdo</label>
+                <div class="quill-wrap"><div id="quill-editor"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="editor-side">
+            <!-- Publicação -->
+            <div class="card" style="padding:16px">
+              <div style="font-weight:700;margin-bottom:14px">Publicação</div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">Status</label>
+                <select class="form-select" id="ed-status">
+                  <option value="draft">Rascunho</option>
+                  <option value="published">Publicado</option>
+                </select>
+              </div>
+              <div class="toggle-row" style="margin-bottom:14px">
+                <label class="toggle"><input type="checkbox" id="ed-featured" /><span class="toggle-slider"></span></label>
+                <span style="font-size:13px">Destaque (hero)</span>
+              </div>
+              <div class="divider"></div>
+              <div class="btn-group">
+                <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveArticle()">
+                  💾 Salvar
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="saveArticle('published')">Publicar</button>
+              </div>
+              <input type="hidden" id="ed-id" value="" />
+            </div>
+
+            <!-- Metadados -->
+            <div class="card" style="padding:16px">
+              <div style="font-weight:700;margin-bottom:14px">Metadados</div>
+              <div class="form-group" style="margin-bottom:10px">
+                <label class="form-label">Categoria</label>
+                <select class="form-select" id="ed-category"></select>
+              </div>
+              <div class="form-group" style="margin-bottom:10px">
+                <label class="form-label">Autor</label>
+                <input class="form-input" id="ed-author" value="Redação" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tempo de leitura (min)</label>
+                <input class="form-input" id="ed-readtime" type="number" min="1" value="3" />
+              </div>
+            </div>
+
+            <!-- Imagem de capa -->
+            <div class="card" style="padding:16px">
+              <div style="font-weight:700;margin-bottom:12px">Imagem de Capa</div>
+              <div class="cover-drop" id="cover-drop" onclick="document.getElementById('cover-file').click()">
+                <div style="font-size:28px">🖼️</div>
+                <div class="cover-drop-label">Clique para fazer upload</div>
+                <div style="font-size:11px;color:var(--gray-300);margin-top:4px">JPG, PNG, WebP · Máx 8 MB</div>
+              </div>
+              <input type="file" id="cover-file" accept="image/*" style="display:none" onchange="uploadCover(this)" />
+              <input type="hidden" id="ed-cover" />
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;justify-content:center" onclick="openMediaPicker()">
+                📁 Escolher da biblioteca
+              </button>
+              <button class="btn btn-danger btn-sm" style="width:100%;margin-top:6px;justify-content:center" id="btn-remove-cover" onclick="removeCover()" style="display:none">
+                🗑️ Remover imagem
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CATEGORIES ─────────────────────── -->
+      <section id="page-categories" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+          <div class="card">
+            <div class="card-header">Categorias <span id="cat-count" style="font-size:12px;color:var(--gray-300);font-weight:400"></span></div>
+            <table class="tbl">
+              <thead><tr><th>Nome</th><th>Slug</th><th>Cor</th><th>Artigos</th><th style="width:100px">Ações</th></tr></thead>
+              <tbody id="cats-tbody"><tr><td colspan="5" class="loading">Carregando…</td></tr></tbody>
+            </table>
+          </div>
+          <div class="card" style="padding:20px">
+            <div style="font-weight:700;margin-bottom:16px" id="cat-form-title">Nova Categoria</div>
+            <div class="form-group" style="margin-bottom:12px">
+              <label class="form-label">Nome *</label>
+              <input class="form-input" id="cat-name" placeholder="Ex: Inteligência Artificial" />
+            </div>
+            <div class="form-group" style="margin-bottom:16px">
+              <label class="form-label">Cor</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" id="cat-color" value="#E43265" style="width:44px;height:36px;border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:2px" />
+                <input class="form-input" id="cat-color-hex" value="#E43265" style="flex:1" oninput="syncColorHex()" />
+              </div>
+            </div>
+            <input type="hidden" id="cat-edit-id" value="" />
+            <div class="btn-group">
+              <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveCategory()">Salvar</button>
+              <button class="btn btn-ghost" id="btn-cat-cancel" style="display:none" onclick="resetCatForm()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── MEDIA ─────────────────────────── -->
+      <section id="page-media" style="display:none">
+        <div class="card" style="padding:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+            <div style="font-weight:700">Biblioteca de Mídia</div>
+            <label class="btn btn-primary btn-sm" style="cursor:pointer">
+              ⬆️ Upload de Imagens
+              <input type="file" accept="image/*" multiple style="display:none" onchange="uploadMedia(this)" />
+            </label>
+          </div>
+          <div id="media-grid" class="media-grid"><div class="loading">Carregando…</div></div>
+        </div>
+      </section>
+
+      <!-- ── NEWSLETTER ─────────────────────── -->
+      <section id="page-newsletter" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            Assinantes da Newsletter
+            <div class="btn-group">
+              <span id="nl-count" style="font-size:12px;color:var(--gray-500);align-self:center"></span>
+              <a class="btn btn-ghost btn-sm" href="/api/newsletter/export" download>⬇️ Exportar CSV</a>
+            </div>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Email</th><th>Nome</th><th>Data de Inscrição</th><th style="width:80px">Ação</th></tr></thead>
+            <tbody id="nl-tbody"><tr><td colspan="4" class="loading">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ── MODAL MÍDIA ─────────────────── -->
+<div class="modal-backdrop" id="media-modal">
+  <div class="modal" style="width:640px;max-height:80vh;overflow-y:auto">
+    <div class="modal-title">Escolher da Biblioteca</div>
+    <div id="media-modal-grid" class="media-grid" style="margin-bottom:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('media-modal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmMediaPick()">Selecionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CONFIRMAÇÃO ─────────────────── -->
+<div class="modal-backdrop" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-title" id="confirm-title">Tem certeza?</div>
+    <div id="confirm-body" style="color:var(--gray-500);font-size:13px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────── -->
+<div id="toast"></div>
+
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let currentPage = 'dashboard';
+let articlesState = { status: '', search: '', category_id: '', page: 1 };
+let categories    = [];
+let quill         = null;
+let mediaPickCallback = null;
+let selectedMediaUrl  = null;
+let searchTimer = null;
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  const res = await api('/api/auth/me');
+  if (res.admin) showApp();
+
+  // Login form
+  document.getElementById('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = document.getElementById('login-error');
+    err.classList.remove('show');
+    const r = await api('/api/auth/login', 'POST', {
+      username: document.getElementById('login-user').value,
+      password: document.getElementById('login-pass').value
+    });
+    if (r.ok) showApp();
+    else { err.textContent = r.error || 'Erro ao entrar'; err.classList.add('show'); }
+  });
+
+  // Quill
+  quill = new Quill('#quill-editor', {
+    theme: 'snow',
+    modules: { toolbar: [
+      [{ header: [2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['blockquote', 'code-block'],
+      ['link', 'image'],
+      [{ align: [] }],
+      ['clean']
+    ]}
+  });
+
+  // Sidebar nav
+  document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+    el.addEventListener('click', () => {
+      const p = el.dataset.page;
+      if (p === 'editor') { newArticle(); }
+      showPage(p);
+    });
+  });
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await api('/api/auth/logout', 'POST');
+    location.reload();
+  });
+
+  // Color picker sync
+  document.getElementById('cat-color').addEventListener('input', e => {
+    document.getElementById('cat-color-hex').value = e.target.value;
+  });
+});
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadDashboard();
+}
+
+// ════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════
+const pageTitles = {
+  dashboard:  'Dashboard',
+  articles:   'Artigos',
+  editor:     'Editor de Artigos',
+  categories: 'Categorias',
+  media:      'Biblioteca de Mídia',
+  newsletter: 'Newsletter',
+};
+const pageLoaders = {
+  dashboard:  loadDashboard,
+  articles:   loadArticles,
+  categories: loadCategories,
+  media:      loadMedia,
+  newsletter: loadNewsletter,
+};
+
+function showPage(name) {
+  document.querySelectorAll('.main .content > section').forEach(s => s.style.display = 'none');
+  document.getElementById(`page-${name}`).style.display = 'block';
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${name}"]`)?.classList.add('active');
+  document.getElementById('topbar-title').textContent = pageTitles[name] || name;
+  document.getElementById('topbar-actions').innerHTML = '';
+  currentPage = name;
+  if (pageLoaders[name]) pageLoaders[name]();
+}
+
+// ════════════════════════════════════════════════
+//  API HELPER
+// ════════════════════════════════════════════════
+async function api(url, method = 'GET', body = null) {
+  const opts = { method, headers: {} };
+  if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  const res = await fetch(url, opts);
+  return res.json().catch(() => ({}));
+}
+
+// ════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  const el = document.createElement('div');
+  el.className = `toast-msg ${type}`;
+  el.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${msg}`;
+  t.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════
+async function loadDashboard() {
+  const s = await api('/api/stats');
+  document.getElementById('s-total').textContent = s.total ?? 0;
+  document.getElementById('s-pub').textContent   = s.published ?? 0;
+  document.getElementById('s-draft').textContent = s.drafts ?? 0;
+  document.getElementById('s-cats').textContent  = s.categories ?? 0;
+  document.getElementById('s-news').textContent  = s.newsletter ?? 0;
+  document.getElementById('nav-badge-articles').textContent  = s.total ?? 0;
+  document.getElementById('nav-badge-newsletter').textContent = s.newsletter ?? 0;
+
+  const tbody = document.getElementById('recent-tbody');
+  if (!s.recent?.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">📰</div><p>Nenhum artigo ainda. <a href="#" onclick="showPage('editor');newArticle()" style="color:var(--brand)">Criar primeiro artigo</a></p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = s.recent.map(a => `
+    <tr>
+      <td class="tbl-title"><a href="#" onclick="editArticle(${a.id})" style="color:var(--black)">${esc(a.title)}</a></td>
+      <td>${a.category_name ? `<span class="tag">${esc(a.category_name)}</span>` : '–'}</td>
+      <td><span class="badge badge-${a.status}">${a.status === 'published' ? '● Publicado' : '○ Rascunho'}</span></td>
+      <td style="font-size:12px;color:var(--gray-500)">${fmtDate(a.created_at)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="editArticle(${a.id})">Editar</button></td>
+    </tr>`).join('');
+}
+
+// ════════════════════════════════════════════════
+//  ARTICLES LIST
+// ════════════════════════════════════════════════
+async function loadArticles() {
+  await loadCatsFilter();
+  const { status, search, category_id, page } = articlesState;
+  const params = new URLSearchParams({ page, limit: 15 });
+  if (status)      params.set('status', status);
+  if (search)      params.set('search', search);
+  if (category_id) params.set('category_id', category_id);
+
+  const data = await api(`/api/articles?${params}`);
+  const tbody = document.getElementById('articles-tbody');
+
+  if (!data.articles?.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div><p>Nenhum artigo encontrado.</p></div></td></tr>`;
+    document.getElementById('articles-pagination').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = data.articles.map(a => `
+    <tr>
+      <td>${a.featured ? '<span title="Destaque">⭐</span>' : ''}</td>
+      <td>
+        <div class="tbl-title">${esc(a.title)}</div>
+        <div style="font-size:11px;color:var(--gray-300)">/artigos/${esc(a.slug)}</div>
+      </td>
+      <td>${a.category_name ? `<span class="tag">${esc(a.category_name)}</span>` : '–'}</td>
+      <td style="font-size:12px">${esc(a.author)}</td>
+      <td><span class="badge badge-${a.status}">${a.status === 'published' ? '● Publicado' : '○ Rascunho'}</span></td>
+      <td style="font-size:12px;color:var(--gray-500)">${fmtDate(a.created_at)}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-ghost btn-sm" onclick="editArticle(${a.id})">✏️</button>
+          ${a.status === 'draft'
+            ? `<button class="btn btn-success btn-sm" onclick="quickPublish(${a.id})">▶</button>`
+            : `<button class="btn btn-ghost btn-sm" onclick="quickUnpublish(${a.id})">⏸</button>`}
+          <button class="btn btn-danger btn-sm" onclick="confirmDelete(${a.id}, '${esc(a.title)}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  // Pagination
+  renderPagination('articles-pagination', data.page, data.pages, p => { articlesState.page = p; loadArticles(); });
+}
+
+async function loadCatsFilter() {
+  const cats = await api('/api/categories');
+  categories = cats;
+  const sel = document.getElementById('cat-filter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todas categorias</option>' +
+    cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  sel.value = cur;
+}
+
+function setStatusFilter(el, status) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  articlesState.status = status;
+  articlesState.page   = 1;
+  loadArticles();
+}
+
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    articlesState.search = document.getElementById('search-input').value;
+    articlesState.page   = 1;
+    loadArticles();
+  }, 350);
+}
+
+async function quickPublish(id) {
+  const a = await api(`/api/articles/${id}`);
+  await api(`/api/articles/${id}`, 'PUT', { ...a, status: 'published' });
+  toast('Artigo publicado!'); loadArticles();
+}
+async function quickUnpublish(id) {
+  const a = await api(`/api/articles/${id}`);
+  await api(`/api/articles/${id}`, 'PUT', { ...a, status: 'draft' });
+  toast('Artigo despublicado.'); loadArticles();
+}
+
+function confirmDelete(id, title) {
+  document.getElementById('confirm-title').textContent = 'Excluir artigo?';
+  document.getElementById('confirm-body').textContent  = `"${title}" será removido permanentemente.`;
+  document.getElementById('confirm-ok').onclick = async () => {
+    await api(`/api/articles/${id}`, 'DELETE');
+    closeModal('confirm-modal');
+    toast('Artigo excluído.'); loadArticles();
+  };
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+// ════════════════════════════════════════════════
+//  EDITOR
+// ════════════════════════════════════════════════
+async function loadEditorCats() {
+  const cats = await api('/api/categories');
+  categories = cats;
+  const sel = document.getElementById('ed-category');
+  sel.innerHTML = '<option value="">Sem categoria</option>' +
+    cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+}
+
+function newArticle() {
+  document.getElementById('ed-id').value      = '';
+  document.getElementById('ed-title').value   = '';
+  document.getElementById('ed-excerpt').value = '';
+  document.getElementById('ed-author').value  = 'Redação';
+  document.getElementById('ed-readtime').value = '3';
+  document.getElementById('ed-status').value  = 'draft';
+  document.getElementById('ed-featured').checked = false;
+  document.getElementById('ed-cover').value   = '';
+  document.getElementById('topbar-title').textContent = 'Novo Artigo';
+  quill?.setContents([]);
+  resetCoverDrop();
+  loadEditorCats();
+}
+
+async function editArticle(id) {
+  showPage('editor');
+  const a = await api(`/api/articles/${id}`);
+  document.getElementById('ed-id').value      = a.id;
+  document.getElementById('ed-title').value   = a.title;
+  document.getElementById('ed-excerpt').value = a.excerpt || '';
+  document.getElementById('ed-author').value  = a.author || 'Redação';
+  document.getElementById('ed-readtime').value = a.read_time || 3;
+  document.getElementById('ed-status').value  = a.status;
+  document.getElementById('ed-featured').checked = !!a.featured;
+  document.getElementById('ed-cover').value   = a.cover_image || '';
+  document.getElementById('topbar-title').textContent = 'Editando: ' + a.title.substring(0, 40);
+  quill?.clipboard.dangerouslyPasteHTML(a.content || '');
+  if (a.cover_image) setCoverPreview(a.cover_image);
+  else resetCoverDrop();
+  await loadEditorCats();
+  document.getElementById('ed-category').value = a.category_id || '';
+}
+
+async function saveArticle(forceStatus) {
+  const id      = document.getElementById('ed-id').value;
+  const title   = document.getElementById('ed-title').value.trim();
+  if (!title) { toast('Título obrigatório', 'error'); return; }
+
+  const payload = {
+    title,
+    excerpt:     document.getElementById('ed-excerpt').value,
+    content:     quill.root.innerHTML,
+    cover_image: document.getElementById('ed-cover').value || null,
+    category_id: document.getElementById('ed-category').value || null,
+    author:      document.getElementById('ed-author').value || 'Redação',
+    status:      forceStatus || document.getElementById('ed-status').value,
+    featured:    document.getElementById('ed-featured').checked,
+    read_time:   parseInt(document.getElementById('ed-readtime').value) || 3,
+  };
+
+  if (forceStatus) { payload.status = forceStatus; document.getElementById('ed-status').value = forceStatus; }
+
+  const method = id ? 'PUT' : 'POST';
+  const url    = id ? `/api/articles/${id}` : '/api/articles';
+  const res    = await api(url, method, payload);
+
+  if (res.error) { toast(res.error, 'error'); return; }
+  if (!id && res.id) document.getElementById('ed-id').value = res.id;
+  toast(payload.status === 'published' ? '🚀 Artigo publicado!' : '💾 Rascunho salvo!');
+}
+
+// ════════════════════════════════════════════════
+//  COVER IMAGE
+// ════════════════════════════════════════════════
+async function uploadCover(input) {
+  const file = input.files[0]; if (!file) return;
+  const fd = new FormData(); fd.append('image', file);
+  const res = await fetch('/api/uploads', { method: 'POST', body: fd }).then(r => r.json());
+  if (res.error) { toast(res.error, 'error'); return; }
+  document.getElementById('ed-cover').value = res.url;
+  setCoverPreview(res.url);
+  toast('Imagem enviada!');
+}
+
+function setCoverPreview(url) {
+  const drop = document.getElementById('cover-drop');
+  drop.classList.add('has-image');
+  drop.innerHTML = `<img src="${url}" />`;
+  drop.onclick = null;
+  document.getElementById('btn-remove-cover').style.display = 'block';
+}
+
+function resetCoverDrop() {
+  const drop = document.getElementById('cover-drop');
+  drop.classList.remove('has-image');
+  drop.innerHTML = `<div style="font-size:28px">🖼️</div><div class="cover-drop-label">Clique para fazer upload</div><div style="font-size:11px;color:var(--gray-300);margin-top:4px">JPG, PNG, WebP · Máx 8 MB</div>`;
+  drop.onclick = () => document.getElementById('cover-file').click();
+  document.getElementById('btn-remove-cover').style.display = 'none';
+}
+
+function removeCover() {
+  document.getElementById('ed-cover').value = '';
+  resetCoverDrop();
+}
+
+// ════════════════════════════════════════════════
+//  CATEGORIES
+// ════════════════════════════════════════════════
+async function loadCategories() {
+  const cats = await api('/api/categories');
+  categories = cats;
+  document.getElementById('cat-count').textContent = `(${cats.length})`;
+  const tbody = document.getElementById('cats-tbody');
+  if (!cats.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><p>Nenhuma categoria. Crie a primeira!</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = cats.map(c => `
+    <tr>
+      <td style="font-weight:600">${esc(c.name)}</td>
+      <td style="font-size:12px;color:var(--gray-500)">${c.slug}</td>
+      <td><span style="display:inline-flex;align-items:center;gap:6px">
+        <span class="color-dot" style="background:${c.color}"></span>
+        <span style="font-size:12px">${c.color}</span>
+      </span></td>
+      <td>${c.article_count}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-ghost btn-sm" onclick="editCategory(${c.id},'${esc(c.name)}','${c.color}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCategory(${c.id},'${esc(c.name)}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function saveCategory() {
+  const id    = document.getElementById('cat-edit-id').value;
+  const name  = document.getElementById('cat-name').value.trim();
+  const color = document.getElementById('cat-color').value;
+  if (!name) { toast('Nome obrigatório', 'error'); return; }
+
+  const res = id
+    ? await api(`/api/categories/${id}`, 'PUT', { name, color })
+    : await api('/api/categories', 'POST', { name, color });
+
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast(id ? 'Categoria atualizada!' : 'Categoria criada!');
+  resetCatForm(); loadCategories();
+}
+
+function editCategory(id, name, color) {
+  document.getElementById('cat-edit-id').value = id;
+  document.getElementById('cat-name').value    = name;
+  document.getElementById('cat-color').value   = color;
+  document.getElementById('cat-color-hex').value = color;
+  document.getElementById('cat-form-title').textContent = 'Editar Categoria';
+  document.getElementById('btn-cat-cancel').style.display = 'block';
+}
+
+function deleteCategory(id, name) {
+  document.getElementById('confirm-title').textContent = 'Excluir categoria?';
+  document.getElementById('confirm-body').textContent  = `"${name}" será removida. Os artigos vinculados perderão a categoria.`;
+  document.getElementById('confirm-ok').onclick = async () => {
+    await api(`/api/categories/${id}`, 'DELETE');
+    closeModal('confirm-modal');
+    toast('Categoria excluída.'); loadCategories();
+  };
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function resetCatForm() {
+  document.getElementById('cat-edit-id').value = '';
+  document.getElementById('cat-name').value    = '';
+  document.getElementById('cat-color').value   = '#E43265';
+  document.getElementById('cat-color-hex').value = '#E43265';
+  document.getElementById('cat-form-title').textContent = 'Nova Categoria';
+  document.getElementById('btn-cat-cancel').style.display = 'none';
+}
+
+function syncColorHex() {
+  const v = document.getElementById('cat-color-hex').value;
+  if (/^#[0-9A-Fa-f]{6}$/.test(v)) document.getElementById('cat-color').value = v;
+}
+
+// ════════════════════════════════════════════════
+//  MEDIA
+// ════════════════════════════════════════════════
+async function loadMedia() {
+  const files = await api('/api/uploads');
+  renderMediaGrid('media-grid', files, true);
+}
+
+async function uploadMedia(input) {
+  const files = Array.from(input.files);
+  for (const file of files) {
+    const fd = new FormData(); fd.append('image', file);
+    await fetch('/api/uploads', { method: 'POST', body: fd });
+  }
+  toast(`${files.length} imagem(ns) enviada(s)!`);
+  loadMedia();
+}
+
+function renderMediaGrid(containerId, files, withDelete = false) {
+  const el = document.getElementById(containerId);
+  if (!files.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>Nenhuma imagem ainda.</p></div>'; return; }
+  el.innerHTML = files.map(f => `
+    <div class="media-item" onclick="selectMedia(this,'${f.url}')">
+      <img src="${f.url}" loading="lazy" />
+      ${withDelete ? `<button class="media-item-del" onclick="event.stopPropagation();deleteMedia('${f.filename}')">✕</button>` : ''}
+    </div>`).join('');
+}
+
+function selectMedia(el, url) {
+  document.querySelectorAll('.media-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMediaUrl = url;
+}
+
+async function deleteMedia(filename) {
+  await api(`/api/uploads/${filename}`, 'DELETE');
+  toast('Imagem removida.'); loadMedia();
+}
+
+// Media picker modal
+function openMediaPicker() {
+  api('/api/uploads').then(files => {
+    renderMediaGrid('media-modal-grid', files, false);
+    document.getElementById('media-modal').classList.add('open');
+  });
+}
+
+function confirmMediaPick() {
+  if (!selectedMediaUrl) { toast('Selecione uma imagem', 'error'); return; }
+  document.getElementById('ed-cover').value = selectedMediaUrl;
+  setCoverPreview(selectedMediaUrl);
+  closeModal('media-modal');
+  selectedMediaUrl = null;
+}
+
+// ════════════════════════════════════════════════
+//  NEWSLETTER
+// ════════════════════════════════════════════════
+async function loadNewsletter() {
+  const subs = await api('/api/newsletter');
+  document.getElementById('nl-count').textContent = `${subs.length} assinante(s)`;
+  const tbody = document.getElementById('nl-tbody');
+  if (!subs.length) {
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty"><div class="empty-icon">📧</div><p>Nenhum assinante ainda.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = subs.map(s => `
+    <tr>
+      <td>${esc(s.email)}</td>
+      <td>${esc(s.name || '–')}</td>
+      <td style="font-size:12px;color:var(--gray-500)">${fmtDate(s.subscribed_at)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteSubscriber(${s.id})">🗑️</button></td>
+    </tr>`).join('');
+}
+
+async function deleteSubscriber(id) {
+  await api(`/api/newsletter/${id}`, 'DELETE');
+  toast('Assinante removido.'); loadNewsletter();
+}
+
+// ════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function fmtDate(d) {
+  if (!d) return '–';
+  return new Date(d).toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function renderPagination(containerId, page, pages, onChange) {
+  if (pages <= 1) { document.getElementById(containerId).innerHTML = ''; return; }
+  let html = '<div class="pagination">';
+  html += `<button class="page-btn" ${page<=1?'disabled':''} onclick="(${onChange})(${page-1})">‹</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (pages > 7 && Math.abs(i - page) > 2 && i !== 1 && i !== pages) {
+      if (i === 2 || i === pages - 1) html += '<span style="padding:0 4px;color:var(--gray-300)">…</span>';
+      continue;
+    }
+    html += `<button class="page-btn ${i===page?'active':''}" onclick="(${onChange})(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" ${page>=pages?'disabled':''} onclick="(${onChange})(${page+1})">›</button>`;
+  html += '</div>';
+  document.getElementById(containerId).innerHTML = html;
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close modals on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
