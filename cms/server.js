@@ -164,8 +164,8 @@ app.get('/api/auth/me', (req, res) => {
 app.get('/api/stats', auth, (req, res) => {
   res.json({
     total:      db.prepare('SELECT COUNT(*) as c FROM articles').get().c,
-    published:  db.prepare('SELECT COUNT(*) as c FROM articles WHERE status="published"').get().c,
-    drafts:     db.prepare('SELECT COUNT(*) as c FROM articles WHERE status="draft"').get().c,
+    published:  db.prepare('SELECT COUNT(*) as c FROM articles WHERE status='published').get().c,
+    drafts:     db.prepare('SELECT COUNT(*) as c FROM articles WHERE status='draft').get().c,
     categories: db.prepare('SELECT COUNT(*) as c FROM categories').get().c,
     newsletter: db.prepare('SELECT COUNT(*) as c FROM newsletter WHERE active=1').get().c,
     recent:     db.prepare(`
@@ -359,7 +359,7 @@ app.get('/api/newsletter/export', auth, (req, res) => {
 // ============================================================
 app.get('/api/public/articles', (req, res) => {
   const { category, featured, page = 1, limit = 12 } = req.query;
-  const conds  = ['a.status="published"'], params = [];
+  const conds  = ['a.status='published], params = [];
 
   if (category) { conds.push('c.slug=?');    params.push(category); }
   if (featured) { conds.push('a.featured=1'); }
