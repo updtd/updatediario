@@ -65,22 +65,25 @@
     .hamburger span { width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
 
     /* HERO */
-    .hero { border-bottom: 1px solid var(--border); padding: 40px 0; }
-    .hero-grid { display: grid; grid-template-columns: 1fr 380px; gap: 0 30px; }
-    .hero-main { grid-row: 1 / 3; position: relative; border-radius: 10px; overflow: hidden; background: var(--gray-100); min-height: 460px; display: flex; flex-direction: column; justify-content: flex-end; }
-    .hero-main img { position: absolute; inset: 0; height: 100%; object-fit: cover; }
-    .hero-main-overlay { position: relative; background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.45) 55%, transparent 100%); padding: 28px 30px; color: var(--white); }
-    .hero-main-tag { display: inline-block; background: var(--brand); color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 4px; margin-bottom: 12px; }
-    .hero-main h1 { font-family: var(--font-serif); font-size: 28px; font-weight: 900; line-height: 1.25; margin-bottom: 12px; }
-    .hero-main p { font-size: 14px; opacity: .85; margin-bottom: 14px; }
-    .hero-meta { font-size: 12px; opacity: .7; display: flex; gap: 16px; }
-    .hero-secondary { display: flex; flex-direction: column; gap: 16px; }
-    .hero-card { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .hero { border-bottom: 1px solid var(--border); padding: 32px 0; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 360px; gap: 0 28px; }
+    .hero-main { grid-row: 1 / 3; position: relative; border-radius: 12px; overflow: hidden; background: var(--gray-100); min-height: 560px; display: flex; flex-direction: column; justify-content: flex-end; cursor: pointer; }
+    .hero-main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .hero-main-overlay { position: relative; background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.55) 45%, transparent 100%); padding: 32px 32px 28px; color: var(--white); }
+    .hero-main-tag { display: inline-block; background: var(--brand); color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 4px 12px; border-radius: 4px; margin-bottom: 14px; }
+    .hero-main h1 { font-family: var(--font-serif); font-size: 36px; font-weight: 900; line-height: 1.2; margin-bottom: 18px; text-shadow: 0 1px 3px rgba(0,0,0,.3); }
+    .hero-main p { font-size: 15px; opacity: .82; margin-bottom: 18px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .hero-meta { font-size: 13px; opacity: .8; display: flex; align-items: center; gap: 12px; }
+    .hero-author-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--brand); border: 2px solid rgba(255,255,255,.4); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: white; flex-shrink: 0; }
+    .hero-meta-sep { opacity: .4; }
+    .hero-secondary { display: flex; flex-direction: column; gap: 0; }
+    .hero-card { display: grid; grid-template-columns: 120px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: start; }
+    .hero-card:first-child { padding-top: 0; }
     .hero-card:last-child { border-bottom: none; padding-bottom: 0; }
-    .hero-card-img { border-radius: 6px; overflow: hidden; height: 78px; background: var(--gray-100); }
-    .hero-card-body { display: flex; flex-direction: column; gap: 4px; }
-    .hero-card-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--brand); }
-    .hero-card h3 { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--black); }
+    .hero-card-img { border-radius: 8px; overflow: hidden; height: 82px; background: var(--gray-100); flex-shrink: 0; }
+    .hero-card-body { display: flex; flex-direction: column; gap: 5px; padding-top: 2px; }
+    .hero-card-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--brand); }
+    .hero-card h3 { font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--black); }
     .hero-card h3:hover { color: var(--brand); }
     .hero-card-meta { font-size: 11px; color: var(--gray-300); margin-top: 2px; }
 
@@ -226,14 +229,21 @@
       .news-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .hero-grid { grid-template-columns: 1fr; }
-      .hero-main { min-height: 360px; grid-row: auto; }
+      .hero-main { min-height: 420px; grid-row: auto; }
+      .hero-main h1 { font-size: 28px; }
+      .hero-secondary { flex-direction: row; flex-wrap: wrap; gap: 16px; margin-top: 20px; }
+      .hero-card { flex: 1 1 260px; border-bottom: none; border-right: 1px solid var(--border); padding: 0 16px 0 0; }
+      .hero-card:last-child { border-right: none; }
     }
     @media (max-width: 768px) {
       .main-nav { display: none; }
       .hamburger { display: flex; }
       .hero-grid, .news-grid, .news-grid-3, .news-split,
       .newsletter-inner, .opinion-grid, .footer-grid { grid-template-columns: 1fr; }
-      .hero-main h1, .article-title { font-size: 22px; }
+      .hero-main h1 { font-size: 24px; }
+      .article-title { font-size: 26px; }
+      .hero-secondary { flex-direction: column; }
+      .hero-card { border-right: none; border-bottom: 1px solid var(--border); padding: 14px 0; }
       .form-row { flex-direction: column; }
       .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     }
@@ -281,7 +291,7 @@
   <section class="hero">
     <div class="container">
       <div class="hero-grid">
-        <div id="hero-main"></div>
+        <div id="hero-main" class="hero-main"></div>
         <div class="hero-secondary" id="hero-secondary"></div>
       </div>
     </div>
@@ -526,9 +536,64 @@ function timeAgo(d) {
   return fmtDate(d);
 }
 
-function coverImg(url, title = '') {
+const CATEGORY_THEMES = {
+  tecnologia: {
+    gradient: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+    icon: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40%;max-width:72px;opacity:.55">
+      <rect x="8" y="12" width="48" height="32" rx="4" stroke="white" stroke-width="3" fill="none"/>
+      <path d="M20 52h24M32 44v8" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      <path d="M20 28l6 6 12-12" stroke="#E43265" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`
+  },
+  negocios: {
+    gradient: 'linear-gradient(135deg,#0A0A0A 0%,#1c1c1c 50%,#2d2d2d 100%)',
+    icon: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40%;max-width:72px;opacity:.55">
+      <rect x="8" y="28" width="10" height="24" rx="2" fill="white"/>
+      <rect x="22" y="20" width="10" height="32" rx="2" fill="white"/>
+      <rect x="36" y="12" width="10" height="40" rx="2" fill="white"/>
+      <rect x="50" y="18" width="6" height="34" rx="2" fill="#E43265"/>
+      <path d="M8 8h48" stroke="#E43265" stroke-width="2" stroke-linecap="round"/>
+    </svg>`
+  },
+  startups: {
+    gradient: 'linear-gradient(135deg,#E43265 0%,#c0182e 50%,#7b0e1c 100%)',
+    icon: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40%;max-width:72px;opacity:.55">
+      <path d="M32 8C32 8 48 16 48 32c0 10-7 18-16 20-9-2-16-10-16-20C16 16 32 8 32 8z" stroke="white" stroke-width="3" fill="none"/>
+      <circle cx="32" cy="30" r="5" fill="white"/>
+      <path d="M18 46l-8 8M46 46l8 8" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    </svg>`
+  },
+  mercados: {
+    gradient: 'linear-gradient(135deg,#064e3b 0%,#065f46 50%,#0A0A0A 100%)',
+    icon: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40%;max-width:72px;opacity:.55">
+      <polyline points="8,48 20,32 30,38 44,20 56,24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <polyline points="44,20 56,20 56,32" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <line x1="8" y1="56" x2="56" y2="56" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".4"/>
+    </svg>`
+  },
+  opiniao: {
+    gradient: 'linear-gradient(135deg,#4c1d95 0%,#5b21b6 50%,#0A0A0A 100%)',
+    icon: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40%;max-width:72px;opacity:.55">
+      <path d="M12 12h40a4 4 0 0 1 4 4v24a4 4 0 0 1-4 4H36l-8 8v-8H12a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z" stroke="white" stroke-width="3" fill="none"/>
+      <line x1="20" y1="26" x2="44" y2="26" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+      <line x1="20" y1="34" x2="36" y2="34" stroke="#E43265" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`
+  },
+  default: {
+    gradient: 'linear-gradient(135deg,#E43265 0%,#8b0a2e 50%,#0A0A0A 100%)',
+    icon: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40%;max-width:72px;opacity:.55">
+      <rect x="12" y="10" width="40" height="44" rx="4" stroke="white" stroke-width="3" fill="none"/>
+      <line x1="20" y1="22" x2="44" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+      <line x1="20" y1="30" x2="44" y2="30" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
+      <line x1="20" y1="38" x2="34" y2="38" stroke="#E43265" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`
+  }
+};
+
+function coverImg(url, title = '', categorySlug = '') {
   if (url) return `<img src="${esc(url)}" alt="${esc(title)}" loading="lazy" />`;
-  return `<div style="width:100%;height:100%;background:linear-gradient(135deg,#E43265 0%,#0A0A0A 100%);display:flex;align-items:center;justify-content:center;"><span style="color:rgba(255,255,255,.3);font-size:28px">📰</span></div>`;
+  const theme = CATEGORY_THEMES[categorySlug] || CATEGORY_THEMES.default;
+  return `<div style="width:100%;height:100%;background:${theme.gradient};display:flex;align-items:center;justify-content:center;">${theme.icon}</div>`;
 }
 
 function articleUrl(slug) {
@@ -643,21 +708,44 @@ async function loadHero() {
 
   // Hero principal
   if (featured) {
-    $('hero-main').innerHTML = `
-      <a href="${articleUrl(featured.slug)}" onclick="openArticle(event,'${esc(featured.slug)}')">
-        ${featured.cover_image
-          ? `<img src="${esc(featured.cover_image)}" alt="${esc(featured.title)}" />`
-          : `<div style="position:absolute;inset:0;background:linear-gradient(135deg,#E43265,#0A0A0A)"></div>`}
-        <div class="hero-main-overlay">
-          <span class="hero-main-tag">${esc(featured.category_name || 'Destaque')}</span>
-          <h1>${esc(featured.title)}</h1>
-          ${featured.excerpt ? `<p>${esc(featured.excerpt)}</p>` : ''}
-          <div class="hero-meta">
-            <span>Por ${esc(featured.author)}</span>
-            <span>${fmtDate(featured.published_at)} · ${featured.read_time} min</span>
-          </div>
+    const theme = CATEGORY_THEMES[featured.category_slug] || CATEGORY_THEMES.default;
+    const heroEl = $('hero-main');
+
+    const overlayHTML = `
+      <div class="hero-main-overlay">
+        <span class="hero-main-tag">${esc(featured.category_name || 'Destaque')}</span>
+        <h1>${esc(featured.title)}</h1>
+        ${featured.excerpt ? `<p>${esc(featured.excerpt)}</p>` : ''}
+        <div class="hero-meta">
+          <div class="hero-author-avatar">${esc(featured.author || 'R').charAt(0).toUpperCase()}</div>
+          <span>${esc(featured.author)}</span>
+          <span class="hero-meta-sep">·</span>
+          <span>${fmtDate(featured.published_at)}</span>
+          <span class="hero-meta-sep">·</span>
+          <span>${featured.read_time} min de leitura</span>
         </div>
-      </a>`;
+      </div>`;
+
+    if (featured.cover_image) {
+      // Com imagem: fundo via img absoluto
+      heroEl.style.background = '';
+      heroEl.innerHTML = `
+        <a href="${articleUrl(featured.slug)}" onclick="openArticle(event,'${esc(featured.slug)}')" style="display:contents;">
+          <img src="${esc(featured.cover_image)}" alt="${esc(featured.title)}"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+          ${overlayHTML}
+        </a>`;
+    } else {
+      // Sem imagem: gradiente no container + ícone centralizado via flex
+      heroEl.style.background = theme.gradient;
+      heroEl.innerHTML = `
+        <a href="${articleUrl(featured.slug)}" onclick="openArticle(event,'${esc(featured.slug)}')" style="display:contents;">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+            ${theme.icon}
+          </div>
+          ${overlayHTML}
+        </a>`;
+    }
   } else {
     $('hero-main').innerHTML = `<div style="min-height:460px;background:var(--gray-100);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gray-300);font-size:14px;">Nenhum destaque publicado ainda</div>`;
   }
@@ -671,7 +759,7 @@ async function loadHero() {
   $('hero-secondary').innerHTML = secondary.map(a => `
     <div class="hero-card">
       <a href="${articleUrl(a.slug)}" class="hero-card-img" onclick="openArticle(event,'${esc(a.slug)}')">
-        ${coverImg(a.cover_image, a.title)}
+        ${coverImg(a.cover_image, a.title, a.category_slug)}
       </a>
       <div class="hero-card-body">
         <span class="hero-card-tag">${esc(a.category_name || '')}</span>
@@ -706,7 +794,7 @@ async function loadLatest() {
   $('latest-list').innerHTML = articles.map(a => `
     <div class="news-list-item">
       <a href="${articleUrl(a.slug)}" class="news-list-img" onclick="openArticle(event,'${esc(a.slug)}')">
-        ${coverImg(a.cover_image, a.title)}
+        ${coverImg(a.cover_image, a.title, a.category_slug)}
       </a>
       <div class="news-list-body">
         <span class="news-list-tag">${esc(a.category_name || '')}</span>
@@ -761,7 +849,7 @@ async function loadSection(categorySlug, gridId, limit) {
   el.innerHTML = articles.map(a => `
     <div class="news-card">
       <a href="${articleUrl(a.slug)}" class="news-card-img" onclick="openArticle(event,'${esc(a.slug)}')">
-        ${coverImg(a.cover_image, a.title)}
+        ${coverImg(a.cover_image, a.title, a.category_slug || categorySlug)}
       </a>
       <span class="news-card-tag">${esc(a.category_name || categorySlug)}</span>
       <a href="${articleUrl(a.slug)}" onclick="openArticle(event,'${esc(a.slug)}')"><h3>${esc(a.title)}</h3></a>
