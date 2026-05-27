@@ -50,6 +50,12 @@ db.exec(`
     updated_at   DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
+  CREATE TABLE IF NOT EXISTS article_categories (
+    article_id  INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+    category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+    PRIMARY KEY (article_id, category_id)
+  );
+
   CREATE TABLE IF NOT EXISTS newsletter (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     email         TEXT UNIQUE NOT NULL,
@@ -59,17 +65,28 @@ db.exec(`
   );
 `);
 
-// Seed categorias padrão
-if (db.prepare('SELECT COUNT(*) as c FROM categories').get().c === 0) {
-  const ins = db.prepare('INSERT INTO categories (name, slug, color) VALUES (?,?,?)');
-  [
-    ['Tecnologia', 'tecnologia',  '#E43265'],
-    ['Negócios',   'negocios',    '#0A0A0A'],
-    ['Startups',   'startups',    '#E43265'],
-    ['Mercados',   'mercados',    '#0A0A0A'],
-    ['Opinião',    'opiniao',     '#E43265'],
-  ].forEach(r => ins.run(...r));
-}
+// Seed / migração de categorias
+// 1. Garante que as 5 categorias corretas existam
+const targetCats = [
+  ['Negócios',   'negocios',    '#E43265'],
+  ['Tecnologia', 'tecnologia',  '#E43265'],
+  ['IA',         'ia',          '#E43265'],
+  ['Brasil',     'brasil',      '#E43265'],
+  ['Mundo',      'mundo',       '#E43265'],
+];
+const insCat = db.prepare('INSERT OR IGNORE INTO categories (name, slug, color) VALUES (?,?,?)');
+targetCats.forEach(r => insCat.run(...r));
+
+// 2. Remove categorias que não fazem mais parte do sistema
+const validSlugs = targetCats.map(r => r[1]);
+const placeholders = validSlugs.map(() => '?').join(',');
+db.prepare(`DELETE FROM categories WHERE slug NOT IN (${placeholders})`).run(...validSlugs);
+
+// 3. Migra category_id → article_categories para artigos existentes
+db.exec(`
+  INSERT OR IGNORE INTO article_categories (article_id, category_id)
+  SELECT id, category_id FROM articles WHERE category_id IS NOT NULL;
+`);
 
 // ============================================================
 //  HELPERS
@@ -216,13 +233,40 @@ app.delete('/api/categories/:id', auth, (req, res) => {
 // ============================================================
 //  ROTAS — ARTIGOS (admin)
 // ============================================================
+// Helper: busca categorias de um artigo
+function getArticleCategories(articleId) {
+  return db.prepare(`
+    SELECT c.id, c.name, c.slug, c.color
+    FROM article_categories ac
+    JOIN categories c ON c.id = ac.category_id
+    WHERE ac.article_id = ?
+    ORDER BY c.name
+  `).all(articleId);
+}
+
+// Helper: atualiza categorias de um artigo (dentro de transação)
+function setArticleCategories(articleId, categoryIds) {
+  db.prepare('DELETE FROM article_categories WHERE article_id=?').run(articleId);
+  if (!categoryIds?.length) return;
+  const ins = db.prepare('INSERT OR IGNORE INTO article_categories (article_id, category_id) VALUES (?,?)');
+  for (const cid of categoryIds) ins.run(articleId, cid);
+  // Mantém category_id (primário) sincronizado
+  db.prepare('UPDATE articles SET category_id=? WHERE id=?').run(categoryIds[0], articleId);
+}
+
 app.get('/api/articles', auth, (req, res) => {
   const { status, category_id, search, page = 1, limit = 20 } = req.query;
   const conds = [], params = [];
 
-  if (status)      { conds.push('a.status=?');       params.push(status); }
-  if (category_id) { conds.push('a.category_id=?');  params.push(category_id); }
-  if (search)      { conds.push('(a.title LIKE ? OR a.excerpt LIKE ?)'); params.push(`%${search}%`, `%${search}%`); }
+  if (status)      { conds.push('a.status=?'); params.push(status); }
+  if (category_id) {
+    conds.push('EXISTS (SELECT 1 FROM article_categories ac WHERE ac.article_id=a.id AND ac.category_id=?)');
+    params.push(category_id);
+  }
+  if (search) {
+    conds.push('(a.title LIKE ? OR a.excerpt LIKE ?)');
+    params.push(`%${search}%`, `%${search}%`);
+  }
 
   const where  = conds.length ? 'WHERE ' + conds.join(' AND ') : '';
   const offset = (Number(page) - 1) * Number(limit);
@@ -237,10 +281,10 @@ app.get('/api/articles', auth, (req, res) => {
     LIMIT ? OFFSET ?
   `).all([...params, Number(limit), offset]);
 
-  const total = db.prepare(
-    `SELECT COUNT(*) as c FROM articles a ${where}`
-  ).get(params).c;
+  // Enriquecer com array de categorias
+  articles.forEach(a => { a.categories = getArticleCategories(a.id); });
 
+  const total = db.prepare(`SELECT COUNT(*) as c FROM articles a ${where}`).get(params).c;
   res.json({ articles, total, page: Number(page), pages: Math.ceil(total / Number(limit)) });
 });
 
@@ -250,15 +294,19 @@ app.get('/api/articles/:id', auth, (req, res) => {
     FROM articles a LEFT JOIN categories c ON c.id=a.category_id
     WHERE a.id=?
   `).get(req.params.id);
-  row ? res.json(row) : res.status(404).json({ error: 'Não encontrado' });
+  if (!row) return res.status(404).json({ error: 'Não encontrado' });
+  row.categories = getArticleCategories(row.id);
+  res.json(row);
 });
 
 app.post('/api/articles', auth, (req, res) => {
-  const { title, excerpt, content, cover_image, category_id,
+  const { title, excerpt, content, cover_image, category_ids,
           author, status, featured, read_time } = req.body;
   if (!title?.trim()) return res.status(400).json({ error: 'Título obrigatório' });
 
-  const slug         = uniqueSlug(toSlug(title));
+  const ids = Array.isArray(category_ids) ? category_ids.filter(Boolean) : [];
+  const primaryCat = ids[0] || null;
+  const slug = uniqueSlug(toSlug(title));
   const published_at = status === 'published' ? new Date().toISOString() : null;
 
   const r = db.prepare(`
@@ -267,21 +315,25 @@ app.post('/api/articles', auth, (req, res) => {
     VALUES (?,?,?,?,?,?,?,?,?,?,?)
   `).run(
     title.trim(), slug, excerpt || null, content || null,
-    cover_image || null, category_id || null,
+    cover_image || null, primaryCat,
     author || 'Redação', status || 'draft',
     featured ? 1 : 0, read_time || 3, published_at
   );
+
+  setArticleCategories(r.lastInsertRowid, ids);
   res.json({ id: r.lastInsertRowid, slug });
 });
 
 app.put('/api/articles/:id', auth, (req, res) => {
-  const { title, excerpt, content, cover_image, category_id,
+  const { title, excerpt, content, cover_image, category_ids,
           author, status, featured, read_time } = req.body;
   if (!title?.trim()) return res.status(400).json({ error: 'Título obrigatório' });
 
   const cur = db.prepare('SELECT status, published_at FROM articles WHERE id=?').get(req.params.id);
   if (!cur) return res.status(404).json({ error: 'Não encontrado' });
 
+  const ids = Array.isArray(category_ids) ? category_ids.filter(Boolean) : [];
+  const primaryCat = ids[0] || null;
   const published_at = status === 'published' && cur.status !== 'published'
     ? new Date().toISOString()
     : cur.published_at;
@@ -294,9 +346,11 @@ app.put('/api/articles/:id', auth, (req, res) => {
     WHERE id=?
   `).run(
     title.trim(), excerpt || null, content || null, cover_image || null,
-    category_id || null, author || 'Redação', status || 'draft',
+    primaryCat, author || 'Redação', status || 'draft',
     featured ? 1 : 0, read_time || 3, published_at, req.params.id
   );
+
+  setArticleCategories(req.params.id, ids);
   res.json({ ok: true });
 });
 
@@ -361,7 +415,10 @@ app.get('/api/public/articles', (req, res) => {
   const { category, featured, page = 1, limit = 12 } = req.query;
   const conds  = ["a.status='published'"], params = [];
 
-  if (category) { conds.push('c.slug=?');    params.push(category); }
+  if (category) {
+    conds.push('EXISTS (SELECT 1 FROM article_categories ac JOIN categories cc ON cc.id=ac.category_id WHERE ac.article_id=a.id AND cc.slug=?)');
+    params.push(category);
+  }
   if (featured) { conds.push('a.featured=1'); }
 
   const where  = 'WHERE ' + conds.join(' AND ');
@@ -376,8 +433,10 @@ app.get('/api/public/articles', (req, res) => {
     ORDER BY a.published_at DESC LIMIT ? OFFSET ?
   `).all([...params, Number(limit), offset]);
 
+  articles.forEach(a => { a.categories = getArticleCategories(a.id); });
+
   const total = db.prepare(
-    `SELECT COUNT(*) as c FROM articles a LEFT JOIN categories c ON c.id=a.category_id ${where}`
+    `SELECT COUNT(*) as c FROM articles a ${where}`
   ).get(params).c;
 
   res.json({ articles, total });
@@ -389,7 +448,9 @@ app.get('/api/public/articles/:slug', (req, res) => {
     FROM articles a LEFT JOIN categories c ON c.id=a.category_id
     WHERE a.slug=? AND a.status='published'
   `).get(req.params.slug);
-  row ? res.json(row) : res.status(404).json({ error: 'Não encontrado' });
+  if (!row) return res.status(404).json({ error: 'Não encontrado' });
+  row.categories = getArticleCategories(row.id);
+  res.json(row);
 });
 
 app.get('/api/public/categories', (req, res) => {
